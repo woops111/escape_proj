@@ -1,4 +1,5 @@
 const { board_content, sequelize } = require('../db/models')
+const { knex } = require('knex')
 
 const getList = async (board_alias) => {
     /*
@@ -18,6 +19,7 @@ const getList = async (board_alias) => {
 
     */
 
+    /*
     const sql_count = " SELECT COUNT(*) as cnt FROM board_content WHERE board_alias=$ba AND del_yn='N' ORDER BY seq_grp DESC, seq DESC "
     const row_count = await sequelize.query(sql_count,{ bind: {ba:board_alias}, type:sequelize.QueryTypes.SELECT } )[0].cnt;
 
@@ -25,6 +27,17 @@ const getList = async (board_alias) => {
     const results = await sequelize.query(sql,{ bind: {ba:board_alias}, type:sequelize.QueryTypes.SELECT } );
 
     return {row_count,results}
+    */
+    
+    let rv;
+    knex('board_content')
+        .where({
+            board_alias:board_alias
+        })
+        .count('ba_idx',{as:'cnt'})
+        .then( cnt => { rv = cnt})
+        
+    return rv;
 }
 
 const regContent = async (req) => {
